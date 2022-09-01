@@ -43,9 +43,9 @@ def analyze(pairs):
             interval=MY_SECOND_INTERVAL,
             timeout= 10
         )
-    
+
     for pair in pairs:
-       
+
         try:
             first_analysis = first_handler[pair].get_analysis()
             second_analysis = second_handler[pair].get_analysis()
@@ -56,7 +56,7 @@ def analyze(pairs):
                     print (f'First handler: {first_handler[pair]}')
                     print (f'Second handler: {second_handler[pair]}')
                     tacheckS = 0
-                
+
         first_tacheck = first_analysis.summary['BUY']
         second_tacheck = second_analysis.summary['BUY']
         if FULL_LOG:
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     pairs=[line.strip() for line in open(TICKERS)]
     for line in open(TICKERS):
         pairs=[line.strip() + PAIR_WITH for line in open(TICKERS)] 
-    
+
     while True:
         print(f'Analyzing {len(pairs)} coins')
         signal_coins = analyze(pairs)

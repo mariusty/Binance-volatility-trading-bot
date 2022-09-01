@@ -26,19 +26,20 @@ FULL_LOG = False # List analysis result to console
 def analyze(pairs):
     signal_coins = {}
     analysis = {}
-    handler = {}
-    
     if os.path.exists('signals/custsignalmod.exs'):
         os.remove('signals/custsignalmod.exs')
 
-    for pair in pairs:
-        handler[pair] = TA_Handler(
+    handler = {
+        pair: TA_Handler(
             symbol=pair,
             exchange=EXCHANGE,
             screener=SCREENER,
             interval=INTERVAL,
-            timeout= 10)
-       
+            timeout=10,
+        )
+        for pair in pairs
+    }
+
     for pair in pairs:
         try:
             analysis = handler[pair].get_analysis()
@@ -49,23 +50,25 @@ def analyze(pairs):
             print (f'Coin: {pair}')
             print (f'handler: {handler[pair]}')
 
-        oscCheck=0
-        maCheck=0
-        for indicator in OSC_INDICATORS:
-            if analysis.oscillators ['COMPUTE'][indicator] == 'BUY': oscCheck +=1
-      	
-        for indicator in MA_INDICATORS:
-            if analysis.moving_averages ['COMPUTE'][indicator] == 'BUY': maCheck +=1		
+        oscCheck = sum(
+            analysis.oscillators['COMPUTE'][indicator] == 'BUY'
+            for indicator in OSC_INDICATORS
+        )
+
+        maCheck = sum(
+            analysis.moving_averages['COMPUTE'][indicator] == 'BUY'
+            for indicator in MA_INDICATORS
+        )
 
         if FULL_LOG:
             print(f'Custsignalmod:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}')
-        
+
         if oscCheck >= OSC_THRESHOLD and maCheck >= MA_THRESHOLD:
                 signal_coins[pair] = pair
                 print(f'Custsignalmod: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.')
                 with open('signals/custsignalmod.exs','a+') as f:
                     f.write(pair + '\n')
-    
+
     return signal_coins
 
 def do_work():
@@ -75,7 +78,7 @@ def do_work():
     pairs=[line.strip() for line in open(TICKERS)]
     for line in open(TICKERS):
         pairs=[line.strip() + PAIR_WITH for line in open(TICKERS)] 
-    
+
     while True:
         if not threading.main_thread().is_alive(): exit()
         print(f'Custsignalmod: Analyzing {len(pairs)} coins')
