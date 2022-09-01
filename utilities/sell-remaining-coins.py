@@ -19,7 +19,6 @@ from helpers.handle_creds import (
 from colorama import init
 init()
 
-# for colourful logging to the console
 class txcolors:
     BUY = '\033[92m'
     WARNING = '\033[93m'
@@ -34,14 +33,14 @@ args = parse_args()
 DEFAULT_CONFIG_FILE = '../config.yml'
 DEFAULT_CREDS_FILE = '../creds.yml'
 
-config_file = args.config if args.config else DEFAULT_CONFIG_FILE
-creds_file = args.creds if args.creds else DEFAULT_CREDS_FILE
+config_file = args.config or DEFAULT_CONFIG_FILE
+creds_file = args.creds or DEFAULT_CREDS_FILE
 parsed_creds = load_config(creds_file)
 parsed_config = load_config(config_file)
 
 LOG_TRADES = parsed_config['script_options'].get('LOG_TRADES')
 LOG_FILE = parsed_config['script_options'].get('LOG_FILE')
-LOG_FILE_PATH = '../' + LOG_FILE
+LOG_FILE_PATH = f'../{LOG_FILE}'
 
 access_key, secret_key = load_correct_creds(parsed_creds)
 
@@ -50,7 +49,7 @@ client = Client(access_key, secret_key)
 def write_log(logline):
     timestamp = datetime.now().strftime("%d/%m %H:%M:%S")
     with open(LOG_FILE_PATH,'a+') as f:
-        f.write(timestamp + ' ' + logline + '\n')
+        f.write(f'{timestamp} {logline}' + '\n')
 
 with open('../coins_bought.json', 'r') as f:
     coins = json.load(f)
@@ -80,7 +79,7 @@ with open('../coins_bought.json', 'r') as f:
         if LOG_TRADES:
             timestamp = datetime.now().strftime("%d/%m %H:%M:%S")
             write_log(f"Sell: {coins[coin]['volume']} {coin} - {BuyPrice} - {LastPrice} Profit: {profit:.2f} {PriceChange:.2f}%")
-    
+
     text_color = txcolors.SELL_PROFIT if total_price_change >= 0. else txcolors.SELL_LOSS
     print(f"Total Profit: {text_color}{total_profit:.2f}{txcolors.DEFAULT}. Total Price Change: {text_color}{total_price_change:.2f}%{txcolors.DEFAULT}")
 
