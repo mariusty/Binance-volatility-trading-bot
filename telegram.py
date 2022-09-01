@@ -4,11 +4,11 @@ from telethon.tl.types import InputPeerUser, InputPeerChannel
 from telethon import TelegramClient, sync, events
 import asyncio
 
-api_id = '19682435'
-api_hash = '6df07025a063974949716694bcf205ca'
-token = '5169620726:AAG7vhr2mwm-z7qgG59zFyLs90mSj39Aqvs'
-phone = '+79957808190'
-bot_token = '5169620726:AAG7vhr2mwm-z7qgG59zFyLs90mSj39Aqvs'
+api_id = 'xxx'
+api_hash = 'xxxxx'
+token = 'xxxxx'
+phone = '+xxxx'
+bot_token = 'xxxxx'
 client = TelegramClient('session', api_id, api_hash)
 bot = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
